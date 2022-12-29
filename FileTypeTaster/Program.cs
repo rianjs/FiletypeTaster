@@ -9,6 +9,10 @@ public class Program
         var fsReader = new FilesystemOffsetReader();
         var testFiles = new List<string>
         {
+            // Path.Combine("/Users/rianjs/Downloads/hobbit ch 1.doc"),
+            Path.Combine("/Users/rianjs/Downloads/Iced coffee.doc"),
+            Path.Combine("/Users/rianjs/Downloads/Iced coffee.docx"),
+            Path.Combine("/Users/rianjs/Downloads/2022-12-5-Signal FT - Pentest-Laika Sales Order_19947.docx"),
             Path.Combine("/Users/rianjs/Downloads/2023 Life.xls"),
             Path.Combine("/Users/rianjs/Downloads/Sample-Spreadsheet-5000-rows.xls"),
             Path.Combine("/Users/rianjs/Downloads/SampleXLSFile_38kb.xls"),
@@ -29,6 +33,9 @@ public class Program
             new() { FileExtension = ".pdf", Taster = new Pdf(fsReader), Filetype = Filetype.Pdf },
             new() { FileExtension = ".xls", Taster = new LegacyExcel(fsReader), Filetype = Filetype.LegacyExcel },
             new() { FileExtension = ".xlsx", Taster = new Excel(fsReader), Filetype = Filetype.Excel },
+            new() { FileExtension = ".docx", Taster = new Word(fsReader), Filetype = Filetype.Word },
+            new() { FileExtension = ".pptx", Taster = new Powerpoint(fsReader), Filetype = Filetype.Powerpoint },
+            new() { FileExtension = ".doc", Taster = new LegacyWord(fsReader), Filetype = Filetype.LegacyWord },
         };
 
         var extensionMap = pairings.ToDictionary(p => p.FileExtension, p => p, StringComparer.OrdinalIgnoreCase);

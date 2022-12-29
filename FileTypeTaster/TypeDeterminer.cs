@@ -42,4 +42,6 @@ public enum Filetype
     Excel,
     Csv,
     Word,
+    LegacyWord,
+    Powerpoint,
 }
