@@ -1,3 +1,5 @@
+using FileTypeTaster.Reader;
+
 namespace FileTypeTaster.Taster;
 
 public class LegacyWord :
@@ -20,11 +22,11 @@ public class LegacyWord :
     /// </remarks>
     /// <param name="path"></param>
     /// <returns></returns>
-    public async Task<Filetype> TastesLikeAsync(string path)
+    public Filetype TastesLike(string path)
     {
         const int offset = 512;
         var expectedSig = new byte[] { 0xEC, 0xA5, 0xC1, 0x00, };
-        var checkSequence = await _reader.ReadBytesAsync(path, offset, 4);
+        var checkSequence = _reader.ReadBytesAsync(path, offset, 4);
         return checkSequence.SequenceEqual(expectedSig)
             ? Filetype.LegacyWord
             : Filetype.Unknown;

@@ -1,8 +1,17 @@
 namespace FileTypeTaster;
 
-public static class ArrayUtils
+public static class SequenceUtils
 {
-    public static bool EndsWith<T>(this T[] haystack, T[] needle) where T : IEquatable<T>
+    public static bool EndsWith<T>(this T[] haystack, T[] needle)
+        where T : IEquatable<T> =>
+        EndsWith(new ReadOnlySpan<T>(haystack), new ReadOnlySpan<T>(needle));
+
+    public static bool StartsWith<T>(this T[] haystack, T[] needle)
+        where T : IEquatable<T> =>
+        StartsWith(new ReadOnlySpan<T>(haystack), new ReadOnlySpan<T>(needle));
+
+    public static bool EndsWith<T>(this ReadOnlySpan<T> haystack, ReadOnlySpan<T> needle)
+        where T : IEquatable<T>
     {
         if (needle.Length > haystack.Length)
         {
@@ -28,7 +37,8 @@ public static class ArrayUtils
         return isMatch;
     }
 
-    public static bool StartsWith<T>(this T[] haystack, T[] needle) where T : IEquatable<T>
+    public static bool StartsWith<T>(this ReadOnlySpan<T> haystack, ReadOnlySpan<T> needle)
+        where T : IEquatable<T>
     {
         if (needle.Length > haystack.Length)
         {

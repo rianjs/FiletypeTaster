@@ -1,3 +1,5 @@
+using FileTypeTaster.Reader;
+
 namespace FileTypeTaster.Taster;
 
 public class LegacyExcel :
@@ -23,11 +25,11 @@ public class LegacyExcel :
     /// </remarks>
     /// <param name="path"></param>
     /// <returns></returns>
-    public async Task<Filetype> TastesLikeAsync(string path)
+    public Task<Filetype> TastesLikeAsync(string path)
     {
         const int offset = 512;
         const int longestArray = 8;
-        var checkSequence = await _reader.ReadBytesAsync(path, offset, longestArray);
+        var checkSequence = _reader.ReadBytesAsync(path, offset, longestArray);
 
         var simpleSigs = new List<byte[]>
         {

@@ -1,10 +1,13 @@
 ﻿using System.Diagnostics;
 using FileTypeTaster;
+using FileTypeTaster.Reader;
 using FileTypeTaster.Taster;
+
+namespace Runner;
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var fsReader = new FilesystemOffsetReader();
         var testFiles = new List<string>
@@ -44,7 +47,7 @@ public class Program
 
         foreach (var file in testFiles)
         {
-            var filetype = await determiner.GetTypeAsync(file);
+            var filetype = determiner.GetType(file);
             Console.WriteLine($"File {file} matches the file signature for {filetype}");
         }
 
@@ -52,7 +55,7 @@ public class Program
         var timer = Stopwatch.StartNew();
         foreach (var file in testFiles)
         {
-            var filetype = await determiner.GetTypeAsync(file);
+            var filetype = determiner.GetType(file);
             Console.WriteLine($"File {file} matches the file signature for {filetype}");
         }
         timer.Stop();

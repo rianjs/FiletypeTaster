@@ -1,4 +1,4 @@
-using System.IO.Compression;
+using FileTypeTaster.Reader;
 
 namespace FileTypeTaster.Taster;
 
@@ -6,22 +6,14 @@ public class Word :
     OpenOfficeXml,
     IFiletypeTaster
 {
+    private const string _contentType = "word";
     public Word(FilesystemOffsetReader reader) : base(reader) { }
 
-    public async Task<Filetype> TastesLikeAsync(string path)
-    {
-        var baseResult = await base.TastesLikeAsync(path);
-        if (baseResult is not Filetype.UnspecifiedOpenOfficeXml)
-        {
-            return Filetype.Unknown;
-        }
+    public Task<Filetype> TastesLikeAsync(string path)
+        => base.TastesLikeAsync(path, _contentType);
 
-        var ooArchive = ZipFile.OpenRead(path);
-        var contents = ooArchive.ExtractContentTypes();
-        return contents.Contains("PartName=\"/word/", StringComparison.OrdinalIgnoreCase)
-            ? Filetype.Word
-            : Filetype.Unknown;
-    }
+    public Filetype TastesLike(ReadOnlySpan<byte> contents)
+        => base.TastesLike(contents, _contentType);
 }
 
 // Word [Content_Type].xml files look like this.

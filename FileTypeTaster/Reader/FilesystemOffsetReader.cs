@@ -1,18 +1,16 @@
-namespace FileTypeTaster;
+namespace FileTypeTaster.Reader;
 
-public class FilesystemOffsetReader : IOffsetReader
+public class FilesystemOffsetReader :
+    IPointerOffsetReader
 {
     public Task<byte[]> ReadBytesAsync(string path, long offset, int count)
     {
-        var buffer = new byte[count];
         using (var fs = new FileStream(path, FileMode.Open))
         using (var reader = new BinaryReader(fs))
         {
             reader.BaseStream.Seek(offset, SeekOrigin.Begin);
-            reader.Read(buffer, 0, count);
+            return Task.FromResult(reader.ReadBytes(count));
         }
-
-        return Task.FromResult(buffer);
     }
 
     public Task<byte[]> GetStartAsync(string path, int count)

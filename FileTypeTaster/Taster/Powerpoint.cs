@@ -1,4 +1,4 @@
-using System.IO.Compression;
+using FileTypeTaster.Reader;
 
 namespace FileTypeTaster.Taster;
 
@@ -6,19 +6,31 @@ public class Powerpoint :
     OpenOfficeXml,
     IFiletypeTaster
 {
+    private const string _contentType = "ppt";
     public Powerpoint(FilesystemOffsetReader reader) : base(reader) { }
 
     public async Task<Filetype> TastesLikeAsync(string path)
     {
-        var baseResult = await base.TastesLikeAsync(path);
+        var baseResult = await base.TastesLikeAsync(path, _contentType);
         if (baseResult is not Filetype.UnspecifiedOpenOfficeXml)
         {
             return Filetype.Unknown;
         }
 
-        var ooArchive = ZipFile.OpenRead(path);
-        var contents = ooArchive.ExtractContentTypes();
-        return contents.Contains("PartName=\"/ppt/", StringComparison.OrdinalIgnoreCase)
+        return ContainsContentType(path, _contentType)
+            ? Filetype.Powerpoint
+            : Filetype.Unknown;
+    }
+
+    public Filetype TastesLike(ReadOnlySpan<byte> contents)
+    {
+        var baseResult = base.TastesLike(contents, _contentType);
+        if (baseResult is not Filetype.UnspecifiedOpenOfficeXml)
+        {
+            return Filetype.Unknown;
+        }
+
+        return ContainsContentType(contents, _contentType)
             ? Filetype.Powerpoint
             : Filetype.Unknown;
     }
