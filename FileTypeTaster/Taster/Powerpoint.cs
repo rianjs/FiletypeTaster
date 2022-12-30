@@ -9,31 +9,11 @@ public class Powerpoint :
     private const string _contentType = "ppt";
     public Powerpoint(FilesystemOffsetReader reader) : base(reader) { }
 
-    public async Task<Filetype> TastesLikeAsync(string path)
-    {
-        var baseResult = await base.TastesLikeAsync(path, _contentType);
-        if (baseResult is not Filetype.UnspecifiedOpenOfficeXml)
-        {
-            return Filetype.Unknown;
-        }
-
-        return ContainsContentType(path, _contentType)
-            ? Filetype.Powerpoint
-            : Filetype.Unknown;
-    }
+    public Task<Filetype> TastesLikeAsync(string path)
+        => base.TastesLikeAsync(path, _contentType);
 
     public Filetype TastesLike(ReadOnlySpan<byte> contents)
-    {
-        var baseResult = base.TastesLike(contents, _contentType);
-        if (baseResult is not Filetype.UnspecifiedOpenOfficeXml)
-        {
-            return Filetype.Unknown;
-        }
-
-        return ContainsContentType(contents, _contentType)
-            ? Filetype.Powerpoint
-            : Filetype.Unknown;
-    }
+        => base.TastesLike(contents, _contentType);
 }
 
 // Powerpoint [Content_Type].xml files look like this:

@@ -7,7 +7,7 @@ namespace Runner;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var fsReader = new FilesystemOffsetReader();
         var testFiles = new List<string>
@@ -47,18 +47,33 @@ public class Program
 
         foreach (var file in testFiles)
         {
-            var filetype = determiner.GetType(file);
-            Console.WriteLine($"File {file} matches the file signature for {filetype}");
+            var filetype = await determiner.GetTypeAsync(file);
+            Console.WriteLine($"FILE: File {file} matches the file signature for {filetype}");
+            var f2 = determiner.GetType(file);
+            Console.WriteLine($"SPAN: File {f2} matches the file signature for {filetype}");
+            Console.WriteLine($"======================== Match? {filetype == f2}");
         }
 
-        Console.WriteLine("Beginning timed run");
+        Console.WriteLine("================================================================================================================================================");
+
+        Console.WriteLine("Beginning timed FILE (async) run");
         var timer = Stopwatch.StartNew();
         foreach (var file in testFiles)
         {
-            var filetype = determiner.GetType(file);
-            Console.WriteLine($"File {file} matches the file signature for {filetype}");
+            var filetype = await determiner.GetTypeAsync(file);
+            Console.WriteLine($"FILE: File {file} matches the file signature for {filetype}");
         }
         timer.Stop();
-        Console.WriteLine($"Checked all files in {timer.ElapsedMilliseconds:N0}ms");
+        Console.WriteLine($"FILE (async) run completed in {timer.ElapsedMilliseconds:N0}ms");
+
+        Console.WriteLine("Beginning timed SPAN (sync) run");
+        timer = Stopwatch.StartNew();
+        foreach (var file in testFiles)
+        {
+            var filetype = determiner.GetType(file);
+            Console.WriteLine($"SPAN: File {filetype} matches the file signature for {filetype}");
+        }
+        timer.Stop();
+        Console.WriteLine($"SPAN (sync) run completed in {timer.ElapsedMilliseconds:N0}ms");
     }
 }

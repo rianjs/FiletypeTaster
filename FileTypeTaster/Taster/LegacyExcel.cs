@@ -6,6 +6,8 @@ public class LegacyExcel :
     IFiletypeTaster
 {
     private readonly FilesystemOffsetReader _reader;
+    private const int _offset = 512;
+    private const int _longestArray = 8;
 
     public LegacyExcel(FilesystemOffsetReader reader)
     {
@@ -25,32 +27,45 @@ public class LegacyExcel :
     /// </remarks>
     /// <param name="path"></param>
     /// <returns></returns>
-    public Task<Filetype> TastesLikeAsync(string path)
+    public async Task<Filetype> TastesLikeAsync(string path)
     {
-        const int offset = 512;
-        const int longestArray = 8;
-        var checkSequence = _reader.ReadBytesAsync(path, offset, longestArray);
+        var checkSequence = await _reader.ReadBytesAsync(path, _offset, _longestArray);
+        return GetFiletype(checkSequence);
+    }
 
-        var simpleSigs = new List<byte[]>
+    public Filetype TastesLike(ReadOnlySpan<byte> contents)
+    {
+        var slice = contents.ReadBytes(_offset, _longestArray);
+        return GetFiletype(slice);
+    }
+
+    private Filetype GetFiletype(ReadOnlySpan<byte> subsequence)
+    {
+        var simpleSigs = new[]
         {
             new byte[] { 0x09, 0x08, 0x10, 0x00, 0x00, 0x06, 0x05, 0x00, },
             new byte[] { 0xFD, 0xFF, 0xFF, 0xFF, 0x20, 0x00, 0x00, 0x00, },
         };
 
-        if (simpleSigs.Any(sig => checkSequence.SequenceEqual(sig)))
+        foreach (var sig in simpleSigs)
         {
-            return Filetype.LegacyExcel;
+            if (subsequence.SequenceEqual(sig))
+            {
+                return Filetype.LegacyExcel;
+            }
         }
 
         var expectedPrefix = new byte[] { 0xFD, 0xFF, 0xFF, 0xFF, };
-        if (!checkSequence.StartsWith(expectedPrefix))
+        if (!subsequence.StartsWith(expectedPrefix))
         {
             return Filetype.Unknown;
         }
 
         const int wildcardCount = 1;
-        var actualSuffix = checkSequence[expectedPrefix.Length + wildcardCount];
+        var actualSuffix = subsequence[expectedPrefix.Length + wildcardCount];
         var result = actualSuffix is 0x00 or 0x02 or 0x07;    // Empirically, 0x07 is also a valid value based on testing
-        return Filetype.LegacyExcel;
+        return result
+            ? Filetype.LegacyExcel
+            : Filetype.Unknown;
     }
 }
