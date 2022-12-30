@@ -23,7 +23,7 @@ public abstract class OpenOfficeXml :
     /// Trailer: Look for 50 4B 05 06 (PK..) followed by 18 additional bytes at the end of the file.</remarks>
     /// <param name="path"></param>
     /// <returns></returns>
-    public virtual bool IsType(string path)
+    public virtual async Task<bool> IsTypeAsync(string path)
     {
         const int headerSize = 8;
         var headers = new[]
@@ -33,7 +33,7 @@ public abstract class OpenOfficeXml :
             new byte[] { 0x50, 0x4B, 0x03, 0x04, 0x14, 0x00, 0x00, 0x00, }, // Numbers export to xlsx
         };
 
-        var actualPrefix = _reader.GetFront(path, headerSize);
+        var actualPrefix = await _reader.GetStartAsync(path, headerSize);
         if (!headers.Any(p => p.SequenceEqual(actualPrefix)))
         {
             return false;
@@ -41,8 +41,7 @@ public abstract class OpenOfficeXml :
 
         var suffix = new byte[] { 0x50, 0x4B, 0x05, 0x06, };
         const int trailerBuffer = 18;
-        var actualTrailer = _reader.GetBack(path, suffix.Length + trailerBuffer);
-        var isOoxml = actualTrailer.StartsWith(suffix);
-        return isOoxml;
+        var actualTrailer = await _reader.GetEndAsync(path, suffix.Length + trailerBuffer);
+        return actualTrailer.StartsWith(suffix);
     }
 }

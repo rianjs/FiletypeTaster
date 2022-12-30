@@ -1,8 +1,8 @@
 namespace FileTypeTaster;
 
-public class FilesystemOffsetReader
+public class FilesystemOffsetReader : IOffsetReader
 {
-    public byte[] ReadBytes(string path, long offset, int count)
+    public Task<byte[]> ReadBytesAsync(string path, long offset, int count)
     {
         var buffer = new byte[count];
         using (var fs = new FileStream(path, FileMode.Open))
@@ -12,16 +12,16 @@ public class FilesystemOffsetReader
             reader.Read(buffer, 0, count);
         }
 
-        return buffer;
+        return Task.FromResult(buffer);
     }
 
-    public byte[] GetFront(string path, int count)
-        => ReadBytes(path, 0, count);
+    public Task<byte[]> GetStartAsync(string path, int count)
+        => ReadBytesAsync(path, 0, count);
 
-    public byte[] GetBack(string path, int offsetFromRear)
+    public Task<byte[]> GetEndAsync(string path, int offsetFromRear)
     {
         var fileLength = new FileInfo(path).Length;
         var fromRear = fileLength - offsetFromRear;
-        return ReadBytes(path, fromRear, offsetFromRear);
+        return ReadBytesAsync(path, fromRear, offsetFromRear);
     }
 }

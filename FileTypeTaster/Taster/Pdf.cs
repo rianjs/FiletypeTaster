@@ -20,16 +20,16 @@ public class Pdf :
         new byte[]{0x0D, 0x25, 0x25, 0x45, 0x4F, 0x46, 0x0D,} // (.%%EOF.)
     };
 
-    public bool IsType(string path)
+    public async Task<bool> IsTypeAsync(string path)
     {
-        var front = _reader.GetFront(path, _preamble.Length);
+        var front = await _reader.GetStartAsync(path, _preamble.Length);
         if (!front.SequenceEqual(_preamble))
         {
             return false;
         }
 
         const int longestBackmarker = 9;
-        var eofChunk = _reader.GetBack(path, longestBackmarker);
+        var eofChunk = await _reader.GetEndAsync(path, longestBackmarker);
         return _trailers.Any(possibility => eofChunk.EndsWith(possibility));
     }
 }

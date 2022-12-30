@@ -23,11 +23,11 @@ public class LegacyExcel :
     /// </remarks>
     /// <param name="path"></param>
     /// <returns></returns>
-    public bool IsType(string path)
+    public async Task<bool> IsTypeAsync(string path)
     {
         const int offset = 512;
         const int longestArray = 8;
-        var checkSequence = _reader.ReadBytes(path, offset, longestArray);
+        var checkSequence = await _reader.ReadBytesAsync(path, offset, longestArray);
 
         var simpleSigs = new List<byte[]>
         {
@@ -48,6 +48,7 @@ public class LegacyExcel :
 
         const int wildcardCount = 1;
         var actualSuffix = checkSequence[expectedPrefix.Length + wildcardCount];
-        return actualSuffix is 0x00 or 0x02 or 0x07;    // Empirically, 0x07 is also a valid value based on testing
+        var result = actualSuffix is 0x00 or 0x02 or 0x07;    // Empirically, 0x07 is also a valid value based on testing
+        return result;
     }
 }

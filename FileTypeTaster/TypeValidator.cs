@@ -1,21 +1,21 @@
 namespace FileTypeTaster;
 
-public class TypeDeterminer
+public class TypeValidator
 {
     private readonly TasteMapper _tasteMap;
 
-    public TypeDeterminer(TasteMapper tasteMap)
+    public TypeValidator(TasteMapper tasteMap)
     {
         _tasteMap = tasteMap;
     }
 
-    public Filetype GetType(string path)
+    public async Task<Filetype> GetTypeAsync(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
 
         var fileExtension = Path.GetExtension(path);
         var expected = _tasteMap.GetTastePairing(Path.GetExtension(path));
-        var isAccurate = expected.Taster.IsType(path);
+        var isAccurate = await expected.Taster.IsTypeAsync(path);
         if (isAccurate)
         {
             return expected.Filetype;
@@ -25,23 +25,4 @@ public class TypeDeterminer
         Console.WriteLine($"Expected type was {expected.Filetype} because the extension was {fileExtension} for path {path}");
         return Filetype.Unknown;
     }
-}
-
-public record FiletypeReport
-{
-    /// <summary> Based on the file extension </summary>
-    public Filetype Expected { get; init; }
-    public Filetype Actual { get; init; }
-}
-
-public enum Filetype
-{
-    Unknown,
-    Pdf,
-    LegacyExcel,
-    Excel,
-    Csv,
-    Word,
-    LegacyWord,
-    Powerpoint,
 }

@@ -7,9 +7,10 @@ public class Powerpoint :
 {
     public Powerpoint(FilesystemOffsetReader reader) : base(reader) { }
 
-    public override bool IsType(string path)
+    public override async Task<bool> IsTypeAsync(string path)
     {
-        if (!base.IsType(path))
+        var baseResult = await base.IsTypeAsync(path);
+        if (!baseResult)
         {
             return false;
         }

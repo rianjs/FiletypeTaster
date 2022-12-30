@@ -9,7 +9,7 @@ public class Program
         var fsReader = new FilesystemOffsetReader();
         var testFiles = new List<string>
         {
-            // Path.Combine("/Users/rianjs/Downloads/hobbit ch 1.doc"),
+            Path.Combine("/Users/rianjs/Downloads/hobbit ch 1.doc"),
             Path.Combine("/Users/rianjs/Downloads/Iced coffee.doc"),
             Path.Combine("/Users/rianjs/Downloads/Iced coffee.docx"),
             Path.Combine("/Users/rianjs/Downloads/2022-12-5-Signal FT - Pentest-Laika Sales Order_19947.docx"),
@@ -40,11 +40,11 @@ public class Program
 
         var extensionMap = pairings.ToDictionary(p => p.FileExtension, p => p, StringComparer.OrdinalIgnoreCase);
         var tasteMapper = new TasteMapper(extensionMap);
-        var determiner = new TypeDeterminer(tasteMapper);
+        var determiner = new TypeValidator(tasteMapper);
 
         foreach (var file in testFiles)
         {
-            var filetype = determiner.GetType(file);
+            var filetype = determiner.GetTypeAsync(file);
             Console.WriteLine($"File {file} matches the file signature for {filetype}");
         }
 
@@ -52,7 +52,7 @@ public class Program
         var timer = Stopwatch.StartNew();
         foreach (var file in testFiles)
         {
-            var filetype = determiner.GetType(file);
+            var filetype = determiner.GetTypeAsync(file);
             Console.WriteLine($"File {file} matches the file signature for {filetype}");
         }
         timer.Stop();
