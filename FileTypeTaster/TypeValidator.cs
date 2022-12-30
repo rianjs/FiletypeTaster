@@ -15,7 +15,8 @@ public class TypeValidator
 
         var fileExtension = Path.GetExtension(path);
         var expected = _tasteMap.GetTastePairing(Path.GetExtension(path));
-        var isAccurate = await expected.Taster.IsTypeAsync(path);
+        var filetype = await expected.Taster.TastesLikeAsync(path);
+        var isAccurate = filetype == expected.Filetype;
         if (isAccurate)
         {
             return expected.Filetype;

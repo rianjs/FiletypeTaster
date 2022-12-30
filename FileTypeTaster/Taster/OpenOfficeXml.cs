@@ -1,8 +1,6 @@
-using System.IO.Compression;
-
 namespace FileTypeTaster.Taster;
 
-public abstract class OpenOfficeXml :
+public class OpenOfficeXml :
     IFiletypeTaster
 {
     private readonly FilesystemOffsetReader _reader;
@@ -23,7 +21,7 @@ public abstract class OpenOfficeXml :
     /// Trailer: Look for 50 4B 05 06 (PK..) followed by 18 additional bytes at the end of the file.</remarks>
     /// <param name="path"></param>
     /// <returns></returns>
-    public virtual async Task<bool> IsTypeAsync(string path)
+    public async Task<Filetype> TastesLikeAsync(string path)
     {
         const int headerSize = 8;
         var headers = new[]
@@ -36,12 +34,14 @@ public abstract class OpenOfficeXml :
         var actualPrefix = await _reader.GetStartAsync(path, headerSize);
         if (!headers.Any(p => p.SequenceEqual(actualPrefix)))
         {
-            return false;
+            return Filetype.Unknown;
         }
 
         var suffix = new byte[] { 0x50, 0x4B, 0x05, 0x06, };
         const int trailerBuffer = 18;
         var actualTrailer = await _reader.GetEndAsync(path, suffix.Length + trailerBuffer);
-        return actualTrailer.StartsWith(suffix);
+        return actualTrailer.StartsWith(suffix)
+            ? Filetype.UnspecifiedOpenOfficeXml
+            : Filetype.Unknown;
     }
 }

@@ -20,11 +20,13 @@ public class LegacyWord :
     /// </remarks>
     /// <param name="path"></param>
     /// <returns></returns>
-    public async Task<bool> IsTypeAsync(string path)
+    public async Task<Filetype> TastesLikeAsync(string path)
     {
         const int offset = 512;
         var expectedSig = new byte[] { 0xEC, 0xA5, 0xC1, 0x00, };
         var checkSequence = await _reader.ReadBytesAsync(path, offset, 4);
-        return checkSequence.SequenceEqual(expectedSig);
+        return checkSequence.SequenceEqual(expectedSig)
+            ? Filetype.LegacyWord
+            : Filetype.Unknown;
     }
 }

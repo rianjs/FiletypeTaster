@@ -3,21 +3,24 @@ using System.IO.Compression;
 namespace FileTypeTaster.Taster;
 
 public class Powerpoint :
-    OpenOfficeXml
+    OpenOfficeXml,
+    IFiletypeTaster
 {
     public Powerpoint(FilesystemOffsetReader reader) : base(reader) { }
 
-    public override async Task<bool> IsTypeAsync(string path)
+    public async Task<Filetype> TastesLikeAsync(string path)
     {
-        var baseResult = await base.IsTypeAsync(path);
-        if (!baseResult)
+        var baseResult = await base.TastesLikeAsync(path);
+        if (baseResult is not Filetype.UnspecifiedOpenOfficeXml)
         {
-            return false;
+            return Filetype.Unknown;
         }
 
         var ooArchive = ZipFile.OpenRead(path);
         var contents = ooArchive.ExtractContentTypes();
-        return contents.Contains("PartName=\"/ppt/", StringComparison.OrdinalIgnoreCase);
+        return contents.Contains("PartName=\"/ppt/", StringComparison.OrdinalIgnoreCase)
+            ? Filetype.Powerpoint
+            : Filetype.Unknown;
     }
 }
 

@@ -44,7 +44,7 @@ public class Program
 
         foreach (var file in testFiles)
         {
-            var filetype = determiner.GetTypeAsync(file);
+            var filetype = await determiner.GetTypeAsync(file);
             Console.WriteLine($"File {file} matches the file signature for {filetype}");
         }
 
@@ -52,7 +52,7 @@ public class Program
         var timer = Stopwatch.StartNew();
         foreach (var file in testFiles)
         {
-            var filetype = determiner.GetTypeAsync(file);
+            var filetype = await determiner.GetTypeAsync(file);
             Console.WriteLine($"File {file} matches the file signature for {filetype}");
         }
         timer.Stop();

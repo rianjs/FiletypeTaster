@@ -23,7 +23,7 @@ public class LegacyExcel :
     /// </remarks>
     /// <param name="path"></param>
     /// <returns></returns>
-    public async Task<bool> IsTypeAsync(string path)
+    public async Task<Filetype> TastesLikeAsync(string path)
     {
         const int offset = 512;
         const int longestArray = 8;
@@ -37,18 +37,18 @@ public class LegacyExcel :
 
         if (simpleSigs.Any(sig => checkSequence.SequenceEqual(sig)))
         {
-            return true;
+            return Filetype.LegacyExcel;
         }
 
         var expectedPrefix = new byte[] { 0xFD, 0xFF, 0xFF, 0xFF, };
         if (!checkSequence.StartsWith(expectedPrefix))
         {
-            return false;
+            return Filetype.Unknown;
         }
 
         const int wildcardCount = 1;
         var actualSuffix = checkSequence[expectedPrefix.Length + wildcardCount];
         var result = actualSuffix is 0x00 or 0x02 or 0x07;    // Empirically, 0x07 is also a valid value based on testing
-        return result;
+        return Filetype.LegacyExcel;
     }
 }
