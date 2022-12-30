@@ -14,16 +14,11 @@ public class TypeValidator
         if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
 
         var fileExtension = Path.GetExtension(path);
-        var expected = _tasteMap.GetTastePairing(Path.GetExtension(path));
+        var expected = _tasteMap.GetTastePairing(fileExtension);
         var filetype = await expected.Taster.TastesLikeAsync(path);
         var isAccurate = filetype == expected.Filetype;
-        if (isAccurate)
-        {
-            return expected.Filetype;
-        }
-
-        // Do something
-        Console.WriteLine($"Expected type was {expected.Filetype} because the extension was {fileExtension} for path {path}");
-        return Filetype.Unknown;
+        return isAccurate
+            ? expected.Filetype
+            : Filetype.Unknown;
     }
 }
