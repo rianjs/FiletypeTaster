@@ -5,7 +5,7 @@ namespace FileTypeTaster.Taster;
 
 public abstract class OpenOfficeXml
 {
-    private readonly FilesystemOffsetReader _reader;
+    private readonly IPointerOffsetReader _reader;
     private const int _headerSize = 8;
     private const int _trailerBuffer = 18;
     private static readonly byte[] _expectedSuffix = { 0x50, 0x4B, 0x05, 0x06, };
@@ -16,7 +16,7 @@ public abstract class OpenOfficeXml
         { "xl", Filetype.Excel },
     };
 
-    public OpenOfficeXml(FilesystemOffsetReader reader)
+    public OpenOfficeXml(IPointerOffsetReader reader)
     {
         _reader = reader;
     }

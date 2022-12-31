@@ -5,9 +5,9 @@ namespace FileTypeTaster.Taster;
 public class Pdf :
     IFiletypeTaster
 {
-    private readonly FilesystemOffsetReader _reader;
+    private readonly IPointerOffsetReader _reader;
 
-    public Pdf(FilesystemOffsetReader reader)
+    public Pdf(IPointerOffsetReader reader)
     {
         _reader = reader;
     }

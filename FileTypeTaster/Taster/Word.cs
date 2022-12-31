@@ -7,7 +7,7 @@ public class Word :
     IFiletypeTaster
 {
     private const string _contentType = "word";
-    public Word(FilesystemOffsetReader reader) : base(reader) { }
+    public Word(IPointerOffsetReader reader) : base(reader) { }
 
     public Task<Filetype> TastesLikeAsync(string path)
         => base.TastesLikeAsync(path, _contentType);

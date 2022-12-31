@@ -7,7 +7,7 @@ public class Powerpoint :
     IFiletypeTaster
 {
     private const string _contentType = "ppt";
-    public Powerpoint(FilesystemOffsetReader reader) : base(reader) { }
+    public Powerpoint(IPointerOffsetReader reader) : base(reader) { }
 
     public Task<Filetype> TastesLikeAsync(string path)
         => base.TastesLikeAsync(path, _contentType);

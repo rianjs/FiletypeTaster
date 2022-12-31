@@ -5,11 +5,11 @@ namespace FileTypeTaster.Taster;
 public class LegacyExcel :
     IFiletypeTaster
 {
-    private readonly FilesystemOffsetReader _reader;
+    private readonly IPointerOffsetReader _reader;
     private const int _offset = 512;
     private const int _longestArray = 8;
 
-    public LegacyExcel(FilesystemOffsetReader reader)
+    public LegacyExcel(IPointerOffsetReader reader)
     {
         _reader = reader;
     }

@@ -9,7 +9,7 @@ public class LegacyWord :
     private const int _length = 4;
     private const int _offset = 512;
 
-    public LegacyWord(FilesystemOffsetReader reader)
+    public LegacyWord(IPointerOffsetReader reader)
     {
         _reader = reader;
     }

@@ -7,7 +7,7 @@ public class Excel :
     IFiletypeTaster
 {
     private const string _contentType = "xl";
-    public Excel(FilesystemOffsetReader reader) : base(reader) { }
+    public Excel(IPointerOffsetReader reader) : base(reader) { }
 
     public Task<Filetype> TastesLikeAsync(string path)
         => base.TastesLikeAsync(path, _contentType);
