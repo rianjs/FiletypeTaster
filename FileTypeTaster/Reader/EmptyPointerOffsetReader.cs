@@ -15,4 +15,7 @@ public class EmptyPointerOffsetReader :
 
     public Task<byte[]> GetEndAsync(string path, int offsetFromRear)
         => Task.FromResult(Array.Empty<byte>());
+
+    public Task<byte[]> GetAllBytesAsync(string path)
+        => Task.FromResult(Array.Empty<byte>());
 }

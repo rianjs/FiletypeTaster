@@ -12,6 +12,7 @@ public class Program
         var fsReader = new FilesystemOffsetReader();
         var testFiles = new List<string>
         {
+            Path.Combine("/Users/rianjs/Downloads/mlb_players.csv"),
             Path.Combine("/Users/rianjs/Downloads/hobbit ch 1.doc"),
             Path.Combine("/Users/rianjs/Downloads/Iced coffee.doc"),
             Path.Combine("/Users/rianjs/Downloads/Iced coffee.docx"),
@@ -39,6 +40,7 @@ public class Program
             new() { FileExtension = ".docx", Taster = new Word(fsReader), Filetype = Filetype.Word },
             new() { FileExtension = ".pptx", Taster = new Powerpoint(fsReader), Filetype = Filetype.Powerpoint },
             new() { FileExtension = ".doc", Taster = new LegacyWord(fsReader), Filetype = Filetype.LegacyWord },
+            new() { FileExtension = ".csv", Taster = new Csv(fsReader), Filetype = Filetype.Csv },
         };
 
         var extensionMap = pairings.ToDictionary(p => p.FileExtension, p => p, StringComparer.OrdinalIgnoreCase);

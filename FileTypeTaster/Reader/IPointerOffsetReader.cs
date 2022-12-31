@@ -12,4 +12,6 @@ public interface IPointerOffsetReader
     Task<byte[]> ReadBytesAsync(string path, long offset, int count);
     Task<byte[]> GetStartAsync(string path, int count);
     Task<byte[]> GetEndAsync(string path, int offsetFromRear);
+    Task<byte[]> GetAllBytesAsync(string path);
+
 }

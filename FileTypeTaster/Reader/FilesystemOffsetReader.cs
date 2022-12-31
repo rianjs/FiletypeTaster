@@ -22,4 +22,7 @@ public class FilesystemOffsetReader :
         var fromRear = fileLength - offsetFromRear;
         return ReadBytesAsync(path, fromRear, offsetFromRear);
     }
+
+    public Task<byte[]> GetAllBytesAsync(string path)
+        => File.ReadAllBytesAsync(path);
 }
