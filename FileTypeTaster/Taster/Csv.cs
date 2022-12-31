@@ -31,11 +31,25 @@ public class Csv :
             parser.SetDelimiters(",");
             while (!parser.EndOfData && lineCount < _minLineCount)
             {
-                var fieldCount = parser.ReadFields()?.Length;
-                if (fieldCount >= _minColumnCount)
+                var fields = parser.ReadFields();
+                if (fields?.Length is null || fields.Length < _minColumnCount)
                 {
-                    lineCount++;
+                    continue;
                 }
+
+                // This parser will do weird stuff with binary files, so we have to check to make sure the contents are all numbers, letters, and symbols
+                foreach (var field in fields)
+                {
+                    foreach (char c in field)
+                    {
+                        if (!char.IsLetterOrDigit(c) && !char.IsSymbol(c) && !char.IsWhiteSpace(c) && !char.IsPunctuation(c))
+                        {
+                            return Filetype.Unknown;
+                        }
+                    }
+                }
+
+                lineCount++;
             }
         }
 

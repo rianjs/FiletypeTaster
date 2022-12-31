@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using FileTypeTaster;
 using FileTypeTaster.Reader;
-using FileTypeTaster.Taster;
 
 namespace Runner;
 
@@ -32,26 +31,14 @@ public class Program
             Path.Combine("/Users/rianjs/Downloads/rstockbower-4Q2022.pdf"),
         };
 
-        var pairings = new List<TastePairing>
-        {
-            new() { FileExtension = ".pdf", Taster = new Pdf(fsReader), Filetype = Filetype.Pdf },
-            new() { FileExtension = ".xls", Taster = new LegacyExcel(fsReader), Filetype = Filetype.LegacyExcel },
-            new() { FileExtension = ".xlsx", Taster = new Excel(fsReader), Filetype = Filetype.Excel },
-            new() { FileExtension = ".docx", Taster = new Word(fsReader), Filetype = Filetype.Word },
-            new() { FileExtension = ".pptx", Taster = new Powerpoint(fsReader), Filetype = Filetype.Powerpoint },
-            new() { FileExtension = ".doc", Taster = new LegacyWord(fsReader), Filetype = Filetype.LegacyWord },
-            new() { FileExtension = ".csv", Taster = new Csv(fsReader), Filetype = Filetype.Csv },
-        };
-
-        var extensionMap = pairings.ToDictionary(p => p.FileExtension, p => p, StringComparer.OrdinalIgnoreCase);
-        var tasteMapper = new TasteMapper(extensionMap);
-        var determiner = new TypeValidator(tasteMapper);
+        var tasteFactory = new TasterFactory(new FilesystemOffsetReader());
 
         foreach (var file in testFiles)
         {
-            var filetype = await determiner.GetTypeAsync(file);
+            var taster = tasteFactory.GetTaster(Path.GetExtension(file));
+            var filetype = await taster.TastesLikeAsync(file);
             Console.WriteLine($"FILE: File {file} matches the file signature for {filetype}");
-            var f2 = determiner.GetType(file);
+            var f2 = taster.TastesLike(File.ReadAllBytes(file));
             Console.WriteLine($"SPAN: File {f2} matches the file signature for {filetype}");
             Console.WriteLine($"======================== Match? {filetype == f2}");
         }
@@ -62,7 +49,8 @@ public class Program
         var timer = Stopwatch.StartNew();
         foreach (var file in testFiles)
         {
-            var filetype = await determiner.GetTypeAsync(file);
+            var taster = tasteFactory.GetTaster(Path.GetExtension(file));
+            var filetype = await taster.TastesLikeAsync(file);
             Console.WriteLine($"FILE: File {file} matches the file signature for {filetype}");
         }
         timer.Stop();
@@ -72,7 +60,8 @@ public class Program
         timer = Stopwatch.StartNew();
         foreach (var file in testFiles)
         {
-            var filetype = determiner.GetType(file);
+            var taster = tasteFactory.GetTaster(Path.GetExtension(file));
+            var filetype = taster.TastesLike(File.ReadAllBytes(file));
             Console.WriteLine($"SPAN: File {filetype} matches the file signature for {filetype}");
         }
         timer.Stop();
